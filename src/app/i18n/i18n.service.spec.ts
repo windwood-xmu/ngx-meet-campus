@@ -5,10 +5,9 @@ import { Subject } from 'rxjs';
 import { I18nService } from './i18n.service';
 
 const defaultLanguage = 'en-US';
-const supportedLanguages = ['eo', 'en-US', 'fr-FR'];
+const supportedLanguages = ['eo', 'zh-CN', 'en-US', 'fr-FR'];
 
 class MockTranslateService {
-
   currentLang = '';
   onLangChange = new Subject();
 
@@ -16,7 +15,7 @@ class MockTranslateService {
     this.currentLang = language;
     this.onLangChange.next({
       lang: this.currentLang,
-      translations: {}
+      translations: {},
     });
   }
 
@@ -24,8 +23,7 @@ class MockTranslateService {
     return 'en-US';
   }
 
-  setTranslation(lang: string, translations: object, shouldMerge?: boolean) { }
-
+  setTranslation(lang: string, translations: object, shouldMerge?: boolean) {}
 }
 
 describe('I18nService', () => {
@@ -35,22 +33,18 @@ describe('I18nService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        I18nService,
-        { provide: TranslateService, useClass: MockTranslateService },
-      ]
+      providers: [I18nService, { provide: TranslateService, useClass: MockTranslateService }],
     });
 
     i18nService = TestBed.inject(I18nService);
     translateService = TestBed.inject(TranslateService);
 
     // Create spies
-  onLangChangeSpy = jest.fn();
-  translateService.onLangChange
-    .subscribe((event: LangChangeEvent) => {
+    onLangChangeSpy = jest.fn();
+    translateService.onLangChange.subscribe((event: LangChangeEvent) => {
       onLangChangeSpy(event.lang);
     });
-  jest.spyOn(translateService, 'use');
+    jest.spyOn(translateService, 'use');
   });
 
   afterEach(() => {
@@ -135,5 +129,4 @@ describe('I18nService', () => {
       expect(currentLanguage).toEqual(defaultLanguage);
     });
   });
-
 });
