@@ -1,4 +1,4 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { LoaderComponent } from './loader.component';
 
@@ -8,9 +8,8 @@ describe('LoaderComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [LoaderComponent]
-    })
-    .compileComponents();
+      declarations: [LoaderComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

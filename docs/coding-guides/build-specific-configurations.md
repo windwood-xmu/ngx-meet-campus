@@ -30,7 +30,7 @@ For each configurable variable (e.g. BROWSER_URL, API_URL):
     API_URL: env.API_URL,
     BROWSER_URL: env.BROWSER_URL,
     // ...
-  }
+  };
   ```
 - Configure your CI's deployment to set the variables and export them to the build script before building - if your CI
   gives you a shell script to run, make it something like this:
@@ -41,8 +41,10 @@ For each configurable variable (e.g. BROWSER_URL, API_URL):
   # ...
   npm run build:ssr-and-client
   ```
-- Finally, to have your cake and eat it too and avoid having to do all that for local development and testing (or clutter
-  your package.json up), install the `dotenv-cli` package and update your development-related npm scripts to take advantage
+- Finally, to have your cake and eat it too and avoid having to do all that for local development and testing (or
+  clutter
+  your package.json up), install the `dotenv-cli` package and update your development-related npm scripts to take
+  advantage
   of it:
   ```shell
   # environment.development.env.sh
@@ -57,12 +59,15 @@ For each configurable variable (e.g. BROWSER_URL, API_URL):
   }
   ```
 
-This way, app configurations will always come from deploy-specific environment variables, and your development environments
+This way, app configurations will always come from deploy-specific environment variables, and your development
+environments
 are still easy to work with.
 
-For configuring the build itself (for example, if you want your QA build to be similar to your production build, but with
+For configuring the build itself (for example, if you want your QA build to be similar to your production build, but
+with
 source maps enabled), consider avoiding adding a build configuration to angular.json, and instead adding the respective
 overriding flag to the `ng` command in package.json:
+
 ```javascript
 {
   "scripts": {
@@ -75,6 +80,7 @@ overriding flag to the `ng` command in package.json:
 
 The development server API proxy config can read runtime environment variables, so you can avoid having a superficial
 dev-server configuration by taking advantage of them:
+
 ```javascript
 {
   "scripts": {
@@ -82,6 +88,7 @@ dev-server configuration by taking advantage of them:
   }
 }
 ```
+
 ```javascript
 const proxyConfig = [
   {
@@ -102,6 +109,7 @@ const proxyConfig = [
 ```
 
 Quick SSR note: SSR works by building all the client bundles like normal, but then rendering them in real-time. So,
+
 - the rest of your app from `main.server.ts` down has access to your build-time environment only, like your normal
   client bundles
 - but `server.ts` (the file configuring and running express) has access to your serve-time environment variables
@@ -112,27 +120,27 @@ Quick SSR note: SSR works by building all the client bundles like normal, but th
   file for each environment using Angular's built-in `fileReplacements`, but then you'll need a separate environment
   file even for deployment-specific configuration (like hostnames), which can get out of hand fast.
 - For a middle-of-the-road approach, you can divide configuration into two groups:
-  * Configuration shared by each environment-type:
+  - Configuration shared by each environment-type:
     - Environment-type examples include local development, staging/qa, test, production...
     - Examples of configuration like this include:
-      * In test, animations are always disabled, but for all other environments, they're enabled
-      * In production, the payment gateway's publishable key is the live key, but all other environments use the
+      - In test, animations are always disabled, but for all other environments, they're enabled
+      - In production, the payment gateway's publishable key is the live key, but all other environments use the
         test key
-  * Configuration that sometimes needs to be specific to an individual deployment of a given environment:
+  - Configuration that sometimes needs to be specific to an individual deployment of a given environment:
     - Examples of configuration like this include:
-      * This particular staging/qa server's base for constructing URLs is qa-stable.example.com, but qa/staging
+      - This particular staging/qa server's base for constructing URLs is qa-stable.example.com, but qa/staging
         environments could also be deployed to preprod.example.com or localhost:8081 or anywhereelse:7000.
-      * This particular deployment uses a specific bucket for Amazon S3 uploads
-  * In this approach, you can use Angular's `fileReplacements` for anything environment-specific and ngx-rocket's
+      - This particular deployment uses a specific bucket for Amazon S3 uploads
+  - In this approach, you can use Angular's `fileReplacements` for anything environment-specific and ngx-rocket's
     `env` for anything deployment-specific. You can even have certain deployment-specific configuration fall back
     to environment-specific defaults for certain environments like so:
-      ```javascript
-      export const environment = {
-        // ...
-          BROWSER_URL: env.BROWSER_URL || 'https://qa.example.com',
-        // ...
-      }
-      ```
+    ```javascript
+    export const environment = {
+      // ...
+      BROWSER_URL: env.BROWSER_URL || 'https://qa.example.com',
+      // ...
+    };
+    ```
 - If you don't have lots of environment variables, you can avoid dotenv-cli and use your particular shell's method
   to expose the variables before running the ngx-rocket env tool.
 
@@ -163,7 +171,7 @@ This type of build-specific configuration is not used by your code, but is used 
 Configuration like this goes into Angular's
 [workspace configuration](https://angular.io/guide/workspace-config#alternate-build-configurations). Instead of
 rehashing existing documentation on this, this document will highlight how it relates to this subject. Namely, the
-fact that in addition to specifying *HOW* the app is built for each build configuration, the workspace configuration
+fact that in addition to specifying _HOW_ the app is built for each build configuration, the workspace configuration
 allows mapping each build configuration to a separate environment configuration file for your codebase as well. It
 also allows for making separate dev-server configurations in case you need to run it differently.
 
@@ -200,7 +208,7 @@ These cases can cause problems when:
 - Each deployment needs a separate URL for building its own URLs to where it's deployed
 - Each deployment needs separate API keys, bucket names, etc
 
-You *COULD* start creating separate configurations for each deployment, each with its own `fileReplacements`, but that
+You _COULD_ start creating separate configurations for each deployment, each with its own `fileReplacements`, but that
 would be really messy.
 
 ### Workarounds that don't work well
@@ -208,7 +216,8 @@ would be really messy.
 One workaround would be to keep such configurations as globals in a separate deployment-specific script file. But
 that's pretty messy too. More importantly, there are limitations to where they can be used. For example, because
 of AOT, such configuration variables cannot be used in Angular's decorators, because they're not statically
-analyzable (i.e. their values knowable at build-time). So it would be better if we can keep everything in the same place.
+analyzable (i.e. their values knowable at build-time). So it would be better if we can keep everything in the same
+place.
 
 ### ngx-rocket to the rescue
 
@@ -235,10 +244,12 @@ environment variables.
 
 To avoid having to do that, you'll can create a .gitignore'd `.env` file with all the variables set, and source it
 with your shell (e.g. `source .env.sh && npm env` in bourne-like shells or `env.bat; npm env` in windows).
+
 ```shell
 # bourne-like .env.sh
 export BROWSER_URL=localhost:4200
 ```
+
 ```shell
 REM windows env.bat
 SET BROWSER_URL=localhost:4200
@@ -247,6 +258,7 @@ SET BROWSER_URL=localhost:4200
 Luckily for us, there's a package called `dotenv-cli` that uses the `dotenv` package and does this in a cleaner and
 cross-platform way and comes with even more bells and whistles. You should use that instead, and make your env file
 like this instead:
+
 ```shell
 BROWSER_URL=localhost:4200
 ```

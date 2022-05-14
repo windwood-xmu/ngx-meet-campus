@@ -1,6 +1,6 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import { CredentialsService, Credentials } from './credentials.service';
+import { Credentials, CredentialsService } from './credentials.service';
 
 const credentialsKey = 'credentials';
 
@@ -9,7 +9,7 @@ describe('CredentialsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [CredentialsService]
+      providers: [CredentialsService],
     });
 
     credentialsService = TestBed.inject(CredentialsService);
